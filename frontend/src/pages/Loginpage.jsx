@@ -1,9 +1,106 @@
-import React from "react";
+import React, {useState} from "react";
 
 export default function Login(){
-    return(
-        <div>
-            <p>Login!</p>
-        </div>
-    )
+    const[form,setForm]=useState({
+        "email":"",
+        "password":"",
+    })
+    const [loading,setLoading]=useState(false)
+    const[errors,setErrors]=useState({});
+
+    const handleChange=(e)=>{
+        setForm({...form,[e.target.name]:e.target.value})
+    }
+
+    const handleSubmit=async(e)=>{
+        e.preventDefault()
+        setLoading(true)
+
+        try{
+            const response=await fetch("http://127.0.0.1:8000/api/",{
+                method:"POST",
+                headers:{
+                    "Content-Type":"application/json"
+                },
+                body:JSON.stringify(form)
+            })
+            const data= await response.json()
+
+            if(!response.ok){
+                setErrors(data)
+            }else{
+                console.log("success:",data)
+                alert("Login successfull")
+
+            }
+            console.log("data:",data)
+        
+
+        }catch(error){
+            console.log("error:",error)
+        }finally{
+            setLoading(false);
+        }
+    }
+
+     return (
+    <div className="min-h-screen flex items-center justify-center bg-gray-100 py-10 px-4">
+      <div className="w-full max-w-lg bg-white shadow-lg rounded-xl p-8">
+        <h2 className="text-3xl font-bold text-center mb-8">
+            Login!
+        </h2>
+
+        <form onSubmit={handleSubmit} className="space-y-5">
+        
+        
+
+        
+          <div>
+            <label className="block mb-2 font-medium">Email</label>
+            <input
+              type="email"
+              name="email"
+              value={form.email}
+              onChange={handleChange}
+              placeholder="Enter email"
+              className="w-full border rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-red-500"
+            />
+            {errors.email && (
+            <p className="text-red-500 text-sm">
+                {errors.email[0]}
+            </p>
+            )}
+          </div>
+
+          
+          <div>
+            <label className="block mb-2 font-medium">Password</label>
+            <input
+              type="password"
+              name="password"
+              value={form.password}
+              onChange={handleChange}
+              placeholder="Enter password"
+              className="w-full border rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-red-500"
+            />
+            {errors.password && (
+            <p className="text-red-500 text-sm">
+                {errors.password[0]}
+            </p>
+            )}
+          </div>
+
+    
+      
+          <button
+            type="submit"
+            className="w-full bg-red-600 text-white py-3 rounded-lg font-semibold hover:bg-red-700 transition duration-300"
+          >
+            Login
+          </button>
+        </form>
+      </div>
+    </div>
+  );
+
 }
