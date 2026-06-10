@@ -30,10 +30,15 @@ export default function Login(){
                 setErrors(data)
             }else{
                 console.log("success:",data)
-                alert("Login successfull")
+                alert("Login successfull");
+
+                if(data.access){
+                    localStorage.setItem("access",data.access);
+                    localStorage.setItem("refresh",data.refresh)
+                }
 
             }
-            console.log("data:",data)
+            
         
 
         }catch(error){
@@ -94,9 +99,10 @@ export default function Login(){
       
           <button
             type="submit"
+            disabled={loading}
             className="w-full bg-red-600 text-white py-3 rounded-lg font-semibold hover:bg-red-700 transition duration-300"
           >
-            Login
+            {loading? "Logging in...":"Login"}
           </button>
         </form>
       </div>
