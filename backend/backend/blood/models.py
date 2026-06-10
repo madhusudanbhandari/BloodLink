@@ -32,16 +32,15 @@ class MyUser(AbstractUser):
     gender=models.CharField(max_length=20,choices=GENDER)
     location=models.CharField(max_length=20)
     role=models.CharField(max_length=10,choices=ROLE_CHOICE)
+    email=models.EmailField(unique=True)
 
-    USERNAME_FIELD="email"
-    REQUIRED_FIELDS=[]
-
+   
 
 class DonorProfile(models.Model):
     user=models.OneToOneField(MyUser,on_delete=models.CASCADE)
 
     last_donated=models.DateField(null=True,blank=True)
-    is_availble=models.BooleanField(default=True)
+    is_available=models.BooleanField(default=True)
 
 
 class RecipientProfile(models.Model):

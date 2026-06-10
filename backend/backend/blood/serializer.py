@@ -1,6 +1,7 @@
 from rest_framework import serializers
 from .models import MyUser,DonorProfile,RecipientProfile
-from rest_framework.response import Response
+from django.contrib.auth import authenticate
+from rest_framework_simplejwt.tokens import RefreshToken
 
 class RegisterSerializer(serializers.ModelSerializer):
     password=serializers.CharField(write_only=True)
@@ -30,7 +31,7 @@ class RegisterSerializer(serializers.ModelSerializer):
             location=validated_data.get('location'),
 
         )
-        if role=="doctor":
+        if role=="donor":
             DonorProfile.objects.create(user=user)
         
         elif role=='recipient':
@@ -38,3 +39,31 @@ class RegisterSerializer(serializers.ModelSerializer):
 
         return user
     
+class LoginSerializer(serializers.ModelSerializer):
+    email=serializers.CharField(max_length=50)
+    password=serializers.CharField(write_only=True)
+
+    class Meta:
+        model=MyUser
+        fields=['email','password']
+
+    def validate(self,data):
+        email=data.get('email')
+        password=data.get('password')
+
+        user=authenticate(username=email,password=password)
+
+        if not user:
+            raise serializers.validationError("Invalid Credentials")
+        
+        refresh=RefreshToken.for_user(user)
+
+        return{
+            "user":{
+                "username":user.username,
+                "email":user.email,
+                "role":user.role,
+            },
+            "access":str(refresh.access_token),
+            "refresh":str(refresh),
+        }
