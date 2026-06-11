@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import MyUser,DonorProfile,RecipientProfile
+from .models import MyUser,DonorProfile,RecipientProfile,BloodRequest
 from django.contrib.auth import authenticate
 from rest_framework_simplejwt.tokens import RefreshToken
 
@@ -67,3 +67,10 @@ class LoginSerializer(serializers.ModelSerializer):
             "access":str(refresh.access_token),
             "refresh":str(refresh),
         }
+    
+class RequestSerializer(serializers.ModelSerializer):
+    class Meta:
+        model=BloodRequest
+        fields="__all__"
+        read_only_fields=['recipient']
+

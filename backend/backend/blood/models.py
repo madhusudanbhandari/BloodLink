@@ -33,21 +33,32 @@ class MyUser(AbstractUser):
     location=models.CharField(max_length=20)
     role=models.CharField(max_length=10,choices=ROLE_CHOICE)
     email=models.EmailField(unique=True)
-
+    username=models.CharField(max_length=150,unique=False)
    
 
 class DonorProfile(models.Model):
     user=models.OneToOneField(MyUser,on_delete=models.CASCADE)
 
-    last_donated=models.DateField(null=True,blank=True)
-    is_available=models.BooleanField(default=True)
-
-
+  
 class RecipientProfile(models.Model):
     user=models.OneToOneField(MyUser,on_delete=models.CASCADE)
 
-    required_blood=models.CharField(max_length=3)
-    hospital_name=models.CharField(max_length=30)
+
+class BloodRequest(models.Model):
+    URGENCY=[
+        ("high","High"),
+        ("low","Low"),
+        ('medium',"Medium")
+    ]
+    recipient=models.ForeignKey(RecipientProfile,on_delete=models.CASCADE,related_name='requests')
+
+    blood_group=models.CharField(max_length=30,choices=MyUser.BLOOD_TYPES)
+    units_required=models.PositiveBigIntegerField()
+    hospital_name=models.CharField(max_length=50)
+    hospital_address=models.CharField(max_length=50)
+    contact_num=models.IntegerField()
+    urgency_level=models.CharField(max_length=20,choices=URGENCY,default='medium')
+
 
 
     

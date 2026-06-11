@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import MyUser,DonorProfile,RecipientProfile
+from .models import MyUser,DonorProfile,RecipientProfile,BloodRequest
 
 # Register your models here.
 
@@ -15,7 +15,7 @@ class DonorAdmin(admin.ModelAdmin):
         return obj.user.username
     
     def get_email(self,obj):
-        return obj.user.username
+        return obj.user.email
     
     get_name.short_description="Name"
     get_email.short_description="Email"
@@ -28,7 +28,14 @@ class RecipientAdmin(admin.ModelAdmin):
         return obj.user.username
     
     def get_email(self,obj):
-        return obj.user.username
-    
+        return obj.user.email
+        
     get_name.short_description="Name"
     get_email.short_description="Email"
+
+@admin.register(BloodRequest)
+class RequestAdmin(admin.ModelAdmin):
+    list_display=['get_name','blood_group','urgency_level']
+
+    def get_name(self,obj):
+        return obj.recipient.user.username
