@@ -1,9 +1,12 @@
 from django.shortcuts import render
-from rest_framework.decorators import api_view, permission_classes
+from rest_framework.decorators import api_view, permission_classes,authentication_classes
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from .serializer import RegisterSerializer,LoginSerializer,RequestSerializer
 from rest_framework.response import Response
 from .models import RecipientProfile
+from rest_framework.authentication import SessionAuthentication
+from rest_framework import status
+from .models import BloodRequest
 
 # Create your views here.
 
@@ -30,9 +33,29 @@ def login(request):
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def request(request):
-     serializer=RequestSerializer(data=request.data)
-     if serializer.is_valid():
+     try:
           recipient=RecipientProfile.objects.get(user=request.user)
+     except RecipientProfile.DoesNotExist:
+          return Response(
+               {"error":"Recipient  not found"},
+               status=status.HTTP_403_FORBIDDEN   
+          )
+     serializer=RequestSerializer(data=request.data)
+
+     if serializer.is_valid():
           serializer.save(recipient=recipient)
-          return Response(serializer.validated_data,status=200)
+          return Response(serializer.data,status=201)
+     
      return Response(serializer.errors,status=400)
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def see_request(request):
+
+     recipient=RecipientProfile.objects.get(user=request.user)
+
+     requests=BloodRequest.objects.filter(recipient=recipient)
+     
+
+     serializer=RequestSerializer(requests,many=True)
+     return Response(serializer.data)

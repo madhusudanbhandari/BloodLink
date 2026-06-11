@@ -54,7 +54,7 @@ class LoginSerializer(serializers.ModelSerializer):
         user=authenticate(username=email,password=password)
 
         if not user:
-            raise serializers.validationError("Invalid Credentials")
+            raise serializers.ValidationError("Invalid Credentials")
         
         refresh=RefreshToken.for_user(user)
 
