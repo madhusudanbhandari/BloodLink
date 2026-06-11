@@ -5,10 +5,12 @@ export default function Navbar(){
 
     const navItems={
         donor:[
-            {name:"Availble Blood", path:'/available'}
+            {name:"Availble Blood", path:'/available'},
+            {name:"List Blood", path:'/listblood'}
         ],
         recipient:[
-            {name:"My-Request", path:'/myrequests'}
+            {name:"My-Requests", path:'/myrequests'},
+            {name:"Make-Request",path:'/makerequests'}
 
         ]
     }
