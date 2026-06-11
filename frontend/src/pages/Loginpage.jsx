@@ -1,6 +1,10 @@
 import React, {useState} from "react";
+import {Link, useNavigate} from "react-router";
+import Donor from "./Donor";
+import Recipient from "./Recipient";
 
 export default function Login(){
+    let navigate=useNavigate();
     const[form,setForm]=useState({
         "email":"",
         "password":"",
@@ -29,12 +33,18 @@ export default function Login(){
             if(!response.ok){
                 setErrors(data)
             }else{
-                console.log("success:",data)
-                alert("Login successfull");
+                // console.log("success:",data)
+                // alert("Login successfull");
 
                 if(data.access){
                     localStorage.setItem("access",data.access);
                     localStorage.setItem("refresh",data.refresh)
+                }
+
+                if(data.user.role=='donor'){
+                  navigate("donor/")
+                }else if (data.user.role=='recipient'){
+                  navigate("recipient/")
                 }
 
             }
@@ -104,6 +114,8 @@ export default function Login(){
           >
             {loading? "Logging in...":"Login"}
           </button>
+          <p>Don't have account?</p> 
+          <Link to='register/'>Register</Link>
         </form>
       </div>
     </div>
