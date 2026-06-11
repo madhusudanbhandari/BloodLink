@@ -7,6 +7,6 @@ urlpatterns=[
     path('request/', views.request, name='request'),
     path('seerequest/',views.see_request,name="see_request"),
     path('listblood/',views.available,name='list_blood'),
-    path('seeblood/',views.available,name='see_blood')
-
+    path('seeblood/',views.available,name='see_blood'),
+    path('getprofile/',views.get_profile,name='get_profile')
 ]

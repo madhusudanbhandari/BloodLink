@@ -68,6 +68,21 @@ class LoginSerializer(serializers.ModelSerializer):
             "refresh":str(refresh),
         }
     
+
+class ProfileSerializer(serializers.ModelSerializer):
+    class Meta:
+        model=MyUser
+        fields = [
+            "id",
+            "username",
+            "email",
+            "age",
+            "blood_group",
+            "gender",
+            "location",
+            "role",
+        ]
+        
 class RequestSerializer(serializers.ModelSerializer):
     class Meta:
         model=BloodRequest

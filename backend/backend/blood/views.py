@@ -1,9 +1,9 @@
 from django.shortcuts import render
 from rest_framework.decorators import api_view, permission_classes,authentication_classes
 from rest_framework.permissions import AllowAny, IsAuthenticated
-from .serializer import RegisterSerializer,LoginSerializer,RequestSerializer,AvailabilitySerializer
+from .serializer import RegisterSerializer,LoginSerializer,RequestSerializer,AvailabilitySerializer,ProfileSerializer
 from rest_framework.response import Response
-from .models import RecipientProfile,DonorProfile,AvailableBlood
+from .models import MyUser, RecipientProfile,DonorProfile,AvailableBlood
 from rest_framework.authentication import SessionAuthentication
 from rest_framework import status
 from .models import BloodRequest
@@ -19,6 +19,13 @@ def register(request):
           serializer.save()
           return Response({'message':"Registration Successfull"},status=201)
      return Response(serializer.errors,status=400)
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def get_profile(request):
+     user=request.user
+     serializer=ProfileSerializer(user)
+     return Response(serializer.data)
 
 
 @api_view(['POST'])
