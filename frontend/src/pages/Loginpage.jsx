@@ -1,7 +1,7 @@
 import React, {useState} from "react";
 import {Link, useNavigate} from "react-router";
-import Donor from "./Donor";
-import Recipient from "./Recipient";
+import Donor from "./Donor/Donor";
+import Recipient from "./Recipient/Recipient";
 
 export default function Login(){
     let navigate=useNavigate();
