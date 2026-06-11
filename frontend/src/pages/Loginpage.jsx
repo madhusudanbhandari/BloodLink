@@ -38,7 +38,8 @@ export default function Login(){
 
                 if(data.access){
                     localStorage.setItem("access",data.access);
-                    localStorage.setItem("refresh",data.refresh)
+                    localStorage.setItem("refresh",data.refresh);
+                    localStorage.setItem("role",data.user.role)
                 }
 
                 if(data.user.role=='donor'){
