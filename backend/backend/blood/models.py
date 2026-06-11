@@ -62,3 +62,11 @@ class BloodRequest(models.Model):
 
 
     
+class AvailableBlood(models.Model):
+    donor=models.ForeignKey(DonorProfile,on_delete=models.CASCADE, related_name="available_blood")
+
+    blood_group=models.CharField(max_length=10,choices=MyUser.BLOOD_TYPES)
+    last_donated=models.DateField()
+    location=models.CharField(max_length=50)
+    contact=models.IntegerField()
+    units_available=models.PositiveBigIntegerField()

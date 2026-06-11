@@ -82,6 +82,14 @@ REST_FRAMEWORK = {
     )
 }
 
+from datetime import timedelta
+
+SIMPLE_JWT={
+    "ACCESS_TOKEN_LIFETIME":timedelta(minutes=30),
+    "REFRESH_TOKEN_LIFETIME":timedelta(days=7)
+
+}
+
 # Database
 # https://docs.djangoproject.com/en/6.0/ref/settings/#databases
 
