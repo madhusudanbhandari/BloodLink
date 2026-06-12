@@ -3,7 +3,7 @@ import { useEffect } from "react";
 
 export default function Donor(){
     const[request,setRequest]=useState([]);
-
+    const[user,setUser]=useState({});
 
     useEffect(()=>{
         const access=localStorage.getItem("access")
@@ -23,9 +23,41 @@ export default function Donor(){
         fetchRequest();
     },[])
 
+    useEffect(()=>{
+            const access=localStorage.getItem("access")
+    
+            const fetchUser=async()=>{
+                const response=await fetch("http://127.0.0.1:8000/api/myprofile/",{
+                    method:"GET",
+                    headers:{
+                        "Content-Type":"application/json",
+                        "Authorization":`Bearer ${access}`
+                    }
+                });
+                const data=await response.json()
+                setUser(data);
+            }
+            fetchUser();
+        },[])
+
 
     return(
         <div>
+            <br /><br />
+            
+                <div className="flex flex-col items-center text-center">
+                    <div>Welcome!</div>
+
+                    <h2 className="text-2xl font-bold text-gray-800 mt-4">
+                        {user.username}
+                    </h2>
+              
+                    <span className="mt-3 px-4 py-1 text-sm rounded-full bg-blue-100 text-blue-600 font-semibold capitalize">
+                        {user.role}
+                    </span>
+                </div>
+                <br /><br />
+
               
         <h2 className="text-2xl font-bold text-gray-800 mb-6 ">
             Blood Requests
