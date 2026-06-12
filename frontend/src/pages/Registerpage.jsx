@@ -303,7 +303,7 @@ export default function Register() {
             Register
           </button>
           <p>Already have an account?</p>
-          <Link to="/"> Login</Link>
+          <Link to="login/"> Login</Link>
         </form>
       </div>
     </div>

@@ -11,6 +11,8 @@ import Available from "./pages/Donor/Available";
 import Profile from "./pages/Profile";
 import MakeRequest from "./pages/Recipient/Make_request";
 import ListBlood from "./pages/Donor/ListBlood";
+import Home from "./pages/Homepage";
+
 
 export default function App(){
   return(
@@ -18,7 +20,8 @@ export default function App(){
    
       <BrowserRouter>
       <Routes>        
-        <Route path="/" element={<Login/>}></Route>
+        <Route path="/" element={<Home/>}></Route>
+        <Route path="login/" element={<Login/>}></Route>
         <Route path="register/" element={<Register/>}></Route>
 
         <Route element={<DashboardLayout/>}>
