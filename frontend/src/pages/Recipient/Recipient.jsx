@@ -71,6 +71,7 @@ export default function Recipient(){
                 <div className="flex justify-between items-center">
                 
                 <div>
+                    <h3 className="font-bold">{li.donor_username}</h3>
                     <h3 className="text-lg font-semibold text-red-600">
                     {li.blood_group}
                     </h3>

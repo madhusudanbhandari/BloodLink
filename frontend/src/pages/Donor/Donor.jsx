@@ -72,6 +72,9 @@ export default function Donor(){
                 <div className="flex justify-between items-center">
                 
                 <div>
+                    <h3 className="font-bold">
+                        {req.recipient_username}
+                    </h3>
                     <h3 className="text-lg font-semibold text-red-600">
                     {req.blood_group}
                     </h3>

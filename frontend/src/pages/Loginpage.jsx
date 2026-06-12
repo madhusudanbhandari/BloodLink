@@ -50,9 +50,9 @@ export default function Login() {
         }
 
         if (data.user.role == "donor") {
-          navigate("donor/");
+          navigate("/donor");
         } else if (data.user.role == "recipient") {
-          navigate("recipient/");
+          navigate("/recipient");
         }
       
     } catch (error) {
@@ -110,7 +110,7 @@ export default function Login() {
             {loading ? "Logging in..." : "Login"}
           </button>
           <p>Don't have account?</p>
-          <Link to="register/">Register</Link>
+          <Link to="/register">Register</Link>
         </form>
       </div>
     </div>

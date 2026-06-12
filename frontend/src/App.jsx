@@ -21,19 +21,19 @@ export default function App(){
       <BrowserRouter>
       <Routes>        
         <Route path="/" element={<Home/>}></Route>
-        <Route path="login/" element={<Login/>}></Route>
-        <Route path="register/" element={<Register/>}></Route>
+        <Route path="/login" element={<Login/>}></Route>
+        <Route path="/register" element={<Register/>}></Route>
 
         <Route element={<DashboardLayout/>}>
-          <Route path="donor/" element={<Donor/>}></Route>
-          <Route path="available" element={<Available/>}></Route>
-          <Route path="listblood/" element={<ListBlood/>} ></Route>
+          <Route path="/donor" element={<Donor/>}></Route>
+          <Route path="/available" element={<Available/>}></Route>
+          <Route path="/listblood" element={<ListBlood/>} ></Route>
 
-          <Route path="recipient/" element={<Recipient/>}></Route>
-          <Route path="myrequests/" element={<Request/>}></Route>
-          <Route path="makerequests/" element={<MakeRequest/>}></Route>
+          <Route path="/recipient" element={<Recipient/>}></Route>
+          <Route path="/myrequests" element={<Request/>}></Route>
+          <Route path="/makerequests" element={<MakeRequest/>}></Route>
 
-          <Route path="myprofile/" element={<Profile/>}></Route>
+          <Route path="/myprofile" element={<Profile/>}></Route>
         </Route>
       </Routes>
       </BrowserRouter>
