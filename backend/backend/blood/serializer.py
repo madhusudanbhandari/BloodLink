@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import MyUser,DonorProfile,RecipientProfile,BloodRequest,AvailableBlood
+from .models import MyUser,DonorProfile,RecipientProfile,BloodRequest,AvailableBlood,DonationRequest
 from django.contrib.auth import authenticate
 from rest_framework_simplejwt.tokens import RefreshToken
 
@@ -84,19 +84,37 @@ class ProfileSerializer(serializers.ModelSerializer):
         ]
         
 class RequestSerializer(serializers.ModelSerializer):
+    recipient_username=serializers.SerializerMethodField()
+
     class Meta:
         model=BloodRequest
         fields="__all__"
         read_only_fields=['recipient']
 
+    def get_recipient_username(self,obj):
+        return obj.recipient.user.username
+
     
 
 class AvailabilitySerializer(serializers.ModelSerializer):
+    donor_username=serializers.SerializerMethodField()
+
+
     class Meta:
         model=AvailableBlood
         fields="__all__"
         read_only_fields=['donor']
 
+    def get_donor_username(self,obj):
+        return obj.donor.user.username
 
+
+
+
+class DonationRequestSerializer(serializers.ModelSerializer):
+    class Meta:
+        model=DonationRequest
+        fields='__all__'
+        read_only_fields=['recipient','status','created_at']
 
 
