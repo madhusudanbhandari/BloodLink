@@ -1,10 +1,23 @@
 import React from "react";
 import {useState, useEffect } from "react";
-
+import { Link } from "react-router-dom";
 
 export default function Recipient(){
 
     const [list,setList]=useState([])
+    const[selectedBlood, setSelectedBlood]=useState(null);
+    const[form,setForm]=useState({
+        contact_num:"",
+        urgency:"",
+        location:"",
+        hospital:""
+    });
+
+    const handleChange=(e)=>{
+        setForm({...form,[e.target.name]:e.target.value})
+    }
+    
+    
 
      useEffect(()=>{
         const access=localStorage.getItem("access")
@@ -23,7 +36,50 @@ export default function Recipient(){
 
         }
         fetchlist();
-    },[])
+    },[]);
+    const openModal=(li)=>{
+        setSelectedBlood(li);
+    }
+    const closeModal=()=>{
+        setSelectedBlood(null);
+        setForm({
+            contact_num:"",
+            urgency:"medium",
+            location:"",
+            hospital:""
+        });
+    };
+
+    const sendRequest=async (e)=>{
+        e.preventDefault();
+
+        const access=localStorage.getItem("access");
+
+        const response=await fetch("http://127.0.0.1:8000/api/request_donation/",{
+            method:"POST",
+            headers:{
+                "Content-Type":"application/json",
+                "Authorization": `Bearer ${access}`
+            },
+            body:JSON.stringify({
+                    available_blood: selectedBlood.id,
+                    contact_num: form.contact_num,
+                    urgency: form.urgency,
+                    location: form.location,
+                    hospital: form.hospital
+                })
+        });
+        const data=await response.json();
+
+        if(response.ok){
+            alert("Request sent successfully");
+            closeModal();
+        }else{
+            alert(data.error || "Failed to send request");
+            console.log("error:",data)      
+          }
+    };
+
 
      const [user,setUser]=useState({})
     
@@ -85,6 +141,13 @@ export default function Recipient(){
                     </p>
                 </div>
 
+                <button
+                            onClick={() => openModal(li)}
+                            className="mt-5  bg-red-400 text-white py-2 px-3 rounded-lg hover:bg-red-600"
+                        >
+                            Request Blood
+                </button>
+
                 <div className="text-right">
                     <p className="text-sm text-gray-500">
                     Units Available
@@ -93,11 +156,88 @@ export default function Recipient(){
                     {li.units_available}
                     </p>
                 </div>
+               
 
                 </div>
             </div>
             ))}
         </div>
+
+        {selectedBlood && (
+                <div className="fixed inset-0 bg-white bg-opacity-50 flex items-center justify-center">
+                    <div className="bg-white p-6 rounded-xl w-96">
+
+                        <h2 className="text-xl font-bold mb-4">
+                            Request {selectedBlood.blood_group} Blood
+                        </h2>
+
+                        <form onSubmit={sendRequest} className="space-y-3">
+
+                            <input
+                                type="text"
+                                name="contact_num"
+                                placeholder="Contact Number"
+                                className="w-full border p-2 rounded"
+                                value={form.contact_num}
+                                onChange={handleChange}
+                                required
+                            />
+
+                            <input
+                                type="text"
+                                name="location"
+                                placeholder="Your Location"
+                                className="w-full border p-2 rounded"
+                                value={form.location}
+                                onChange={handleChange}
+                                required
+                            />
+
+                            <input
+                                type="text"
+                                name="hospital"
+                                placeholder="Hospital Name"
+                                className="w-full border p-2 rounded"
+                                value={form.hospital}
+                                onChange={handleChange}
+                                required
+                            />
+
+                            <select
+                                name="urgency"
+                                className="w-full border p-2 rounded"
+                                value={form.urgency}
+                                onChange={handleChange}
+                            >
+                                <option value="low">Low</option>
+                                <option value="medium">Medium</option>
+                                <option value="high">High</option>
+                            </select>
+
+                            <div className="flex gap-2 mt-4">
+
+                                <button
+                                    type="submit"
+                                    className="flex-1 bg-red-500 text-white py-2 rounded hover:bg-red-600"
+                                >
+                                    Send Request
+                                </button>
+
+                                <button
+                                    type="button"
+                                    onClick={closeModal}
+                                    className="flex-1 bg-gray-300 py-2 rounded"
+                                >
+                                    Cancel
+                                </button>
+
+                            </div>
+                        </form>
+
+                    </div>
+                </div>
+            )}
+
 
         </div>
     )

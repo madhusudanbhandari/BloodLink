@@ -77,7 +77,7 @@ export default function Donor(){
                     </h3>
                     <h3 className="text-lg font-semibold text-red-600">
                     {req.blood_group}
-                    </h3>
+                    </h3>s
 
                     <p className="text-gray-600 mt-1">
                     🏥 {req.hospital_name}
