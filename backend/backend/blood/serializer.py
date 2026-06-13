@@ -112,9 +112,18 @@ class AvailabilitySerializer(serializers.ModelSerializer):
 
 
 class DonationRequestSerializer(serializers.ModelSerializer):
+    recipient_username=serializers.SerializerMethodField()
+
+    blood_group=serializers.SerializerMethodField()
+    
     class Meta:
         model=DonationRequest
         fields='__all__'
         read_only_fields=['recipient','status','created_at']
 
+    def get_recipient_username(self,obj):
+        return obj.recipient.user.username
+    
+    def get_blood_group(self,obj):
+        return obj.available_blood.blood_group
 

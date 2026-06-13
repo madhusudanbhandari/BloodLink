@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import MyUser,DonorProfile,RecipientProfile,BloodRequest,AvailableBlood
+from .models import MyUser,DonorProfile,RecipientProfile,BloodRequest,AvailableBlood,DonationRequest
 
 # Register your models here.
 
@@ -46,3 +46,13 @@ class AvailableAdmin(admin.ModelAdmin):
 
     def get_name(self,obj):
         return obj.donor.user.username
+    
+@admin.register(DonationRequest)
+class DonationRequestAdmin(admin.ModelAdmin):
+    list_display=['get_recipient','get_available_blood']
+
+    def get_recipient(self,obj):
+        return obj.recipient.user.username
+    
+    def get_available_blood(self,obj):
+        return obj.available_blood.blood_group

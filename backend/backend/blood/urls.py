@@ -9,5 +9,6 @@ urlpatterns=[
     path('listblood/',views.available,name='list_blood'),
     path('seeblood/',views.available,name='see_blood'),
     path('myprofile/',views.get_profile,name='get_profile'),
-    path('request_donor/',views.request_donation,name='donor_request')
+    path('request_donation/',views.request_donation,name='donor_request'),
+    path('donor_donation_requests/',views.donor_donation_request)
 ]
