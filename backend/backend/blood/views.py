@@ -169,3 +169,27 @@ def donor_donation_request(request):
      )
 
      return Response(serializer.data)
+
+
+@api_view(['PATCH'])
+@permission_classes([IsAuthenticated])
+def update_donation_request(request, pk):
+    donor = DonorProfile.objects.get(user=request.user)
+
+    donation_request = DonationRequest.objects.get(
+        id=pk,
+        available_blood__donor=donor
+    )
+
+    new_status = request.data.get("status")
+
+    if new_status not in ["accepted", "rejected"]:
+        return Response(
+            {"error": "Invalid status"},
+            status=400
+        )
+
+    donation_request.status = new_status
+    donation_request.save()
+
+    return Response({"status": donation_request.status})
