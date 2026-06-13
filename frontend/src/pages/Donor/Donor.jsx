@@ -2,26 +2,40 @@ import React, { useState } from "react";
 import { useEffect } from "react";
 
 export default function Donor(){
-    const[request,setRequest]=useState([]);
+    //const[request,setRequest]=useState([]);
     const[user,setUser]=useState({});
+    const[requests,setRequests]=useState([]);
 
     useEffect(()=>{
-        const access=localStorage.getItem("access")
+        const access=localStorage.getItem("access");
 
-        const fetchRequest=async()=>{
-            const response=await fetch("http://127.0.0.1:8000/api/seerequest",{
-                method:"GET",
-                headers:{
-                    "Content-Type":"application/json",
-                    "Authorization":`Bearer ${access}`
+        fetch("http://127.0.0.1:8000/api/donor_donation_requests/",{
+            headers:{
+                "Authorization":`Bearer ${access}`,
+            }
+        })
+        .then(res=>res.json())
+        .then(data=>setRequests(data));
+    },[]);
 
-                }
-            });
-            const data=await response.json()
-            setRequest(data);
-        }
-        fetchRequest();
-    },[])
+
+    // useEffect(()=>{
+    //     const access=localStorage.getItem("access")
+
+    //     const fetchRequest=async()=>{
+    //         const response=await fetch("http://127.0.0.1:8000/api/seerequest",{
+    //             method:"GET",
+    //             headers:{
+    //                 "Content-Type":"application/json",
+    //                 "Authorization":`Bearer ${access}`
+
+    //             }
+    //         });
+    //         const data=await response.json()
+    //         setRequest(data);
+    //     }
+    //     fetchRequest();
+    // },[])
 
     useEffect(()=>{
             const access=localStorage.getItem("access")
@@ -62,8 +76,50 @@ export default function Donor(){
         <h2 className="text-2xl font-bold text-gray-800 mb-6 ">
             Blood Requests
         </h2>
+                        <div className="space-y-4">
 
-        <div className="grid gap-4">
+                {requests.map((req) => (
+
+                    <div
+                        key={req.id}
+                        className="bg-white p-5 rounded-xl shadow"
+                    >
+                        <h2 className="font-bold text-red-600">
+                            {req.blood_group}
+                        </h2>
+
+                        <p>
+                            Recipient: {req.recipient_username}
+                        </p>
+
+                        <p>
+                            Contact: {req.contact_num}
+                        </p>
+
+                        <p>
+                            Location: {req.location}
+                        </p>
+
+                        <p>
+                            Hospital: {req.hospital}
+                        </p>
+
+                        <p>
+                            Urgency: {req.urgency}
+                        </p>
+
+                        <p>
+                            Status: {req.status}
+                        </p>
+
+                    </div>
+
+                ))}
+
+            </div>
+
+            
+        {/* <div className="grid gap-4">
             {request.map((req) => (
             <div
                 key={req.id}
@@ -77,7 +133,7 @@ export default function Donor(){
                     </h3>
                     <h3 className="text-lg font-semibold text-red-600">
                     {req.blood_group}
-                    </h3>s
+                    </h3>
 
                     <p className="text-gray-600 mt-1">
                     🏥 {req.hospital_name}
@@ -100,7 +156,9 @@ export default function Donor(){
                 </div>
             </div>
             ))}
-        </div>
+        </div> */}
+
+
         </div>
     )
 }
