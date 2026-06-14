@@ -11,5 +11,6 @@ urlpatterns=[
     path('myprofile/',views.get_profile,name='get_profile'),
     path('request_donation/',views.request_donation,name='donor_request'),
     path('donor_donation_requests/',views.donor_donation_request),
-    path('donation_request/<int:pk>/',views.update_donation_request,name='respond_donation_request')
+    path('donation_request/<int:pk>/',views.update_donation_request,name='respond_donation_request'),
+    path('recipient_donation_response/',views.recipient_donation_response)
 ]

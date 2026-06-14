@@ -193,3 +193,16 @@ def update_donation_request(request, pk):
     donation_request.save()
 
     return Response({"status": donation_request.status})
+
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def recipient_donation_response(request):
+    recipient=RecipientProfile.objects.get(user=request.user)
+    
+
+    requests=DonationRequest.objects.filter(recipient=recipient)
+
+    serializer=DonationRequestSerializer(requests,many=True)
+    
+    return Response(serializer.data)
