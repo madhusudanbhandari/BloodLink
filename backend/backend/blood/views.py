@@ -1,9 +1,9 @@
 from django.shortcuts import render
 from rest_framework.decorators import api_view, permission_classes,authentication_classes
 from rest_framework.permissions import AllowAny, IsAuthenticated
-from .serializer import RegisterSerializer,LoginSerializer,RequestSerializer,AvailabilitySerializer,ProfileSerializer,DonationRequestSerializer
+from .serializer import RegisterSerializer,LoginSerializer,RequestSerializer,AvailabilitySerializer,ProfileSerializer,DonationRequestSerializer,DonationOfferSerialzer
 from rest_framework.response import Response
-from .models import MyUser, RecipientProfile,DonorProfile,AvailableBlood,DonationRequest
+from .models import MyUser, RecipientProfile,DonorProfile,AvailableBlood,DonationRequest,DonationOffer
 from rest_framework.authentication import SessionAuthentication
 from rest_framework import status
 from .models import BloodRequest
@@ -39,7 +39,7 @@ def login(request):
 
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
-def request(request):
+def recipient_request(request):
      try:
           recipient=RecipientProfile.objects.get(user=request.user)
      except RecipientProfile.DoesNotExist:
@@ -48,33 +48,13 @@ def request(request):
                status=status.HTTP_403_FORBIDDEN   
           )
      
-     blood_id=request.data.get("available_blood")
-
-     try:
-          available_blood=AvailableBlood.objects.get(id=blood_id)
-     except AvailableBlood.DoesNotExist:
-          return Response(
-          {"error":"Available blood not found"},
-          status=404
-          )
 
      serializer=RequestSerializer(data=request.data)
 
      if serializer.is_valid():
-          already_exists=BloodRequest.objects.filter(
-               recipient=recipient,
-               available_blood=available_blood
-          ).exists()
-
-          if already_exists:
-               return Response(
-                    {"error":"Request already sent"},
-                    status=400
-               )
-          
-
+      
           serializer.save(recipient=recipient,
-                          available_blood=available_blood)
+                          )
           
           return Response(serializer.data,status=201)
      
@@ -83,10 +63,13 @@ def request(request):
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def see_request(request):
+     user=request.user
 
-     # recipient=RecipientProfile.objects.get(user=request.user)
-
-     requests=BloodRequest.objects.all()
+     if user.role=='recipient':
+          recipient=RecipientProfile.objects.get(user=request.user)
+          requests=BloodRequest.objects.filter(recipient=recipient)
+     elif user.role=='donor':
+          requests=BloodRequest.objects.all()
 
 
      serializer=RequestSerializer(requests,many=True)
@@ -97,6 +80,7 @@ def see_request(request):
 @permission_classes([IsAuthenticated])
 def available(request):
      
+
      if request.method=='POST':
           donor=DonorProfile.objects.get(user=request.user)
 
@@ -108,66 +92,62 @@ def available(request):
      
 
      if request.method=="GET":
-          available_blood=AvailableBlood.objects.all()
+          user=request.user
+
+          if user.role=='donor':
+               donor=DonorProfile.objects.get(user=request.user)
+               available_blood=AvailableBlood.objects.filter(donor=donor)
+          elif user.role=='recipient':
+               available_blood=AvailableBlood.objects.all()
 
           serializer=AvailabilitySerializer(available_blood,many=True)
           return Response(serializer.data)
      
 
-@api_view(['POST'])
+@api_view(['GET','POST'])
 @permission_classes([IsAuthenticated])
-def request_donation(request):
-     try:
-          recipient=RecipientProfile.objects.get(user=request.user)
-     except RecipientProfile.DoesNotExist:
-          return Response(
-               {"error":"Recipient profile not founc"},
-               status=status.HTTP_403_FORBIDDEN
-          )
-     
+def donation_request_view(request):
 
+     user=request.user
 
-     serializer=DonationRequestSerializer(data=request.data)
+     if request.method=='POST':
+          recipient=RecipientProfile.objects.get(user=user)
 
-     if serializer.is_valid():
+          serializer=DonationRequestSerializer(data=request.data)
 
-          available_blood=serializer.validated_data['available_blood']
-          if DonationRequest.objects.filter(
-               recipient=recipient,
-               available_blood=available_blood,
-               status='pending'
-          ).exists():
-               return Response(
-                    {"error":"You have already requested this donor."},
-                    status=status.HTTP_400_BAD_REQUEST
-               )
+          if serializer.is_valid():
+               available_blood=serializer.validated_data['available_blood']
+
+               if DonationRequest.objects.filter(
+                    recipient=recipient,
+                    available_blood=available_blood,
+                    status='pending'
+               ).exists():
+                    return Response({"error":"Already requestes"},status=400)
+               
+               serializer.save(recipient=recipient)
+               return Response(serializer.data,status=201)
           
-          serializer.save(recipient=recipient)
-          return Response(serializer.data,status=status.HTTP_201_CREATED)
+          return Response(serializer.error,status=400)
      
-     return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)
+     if user.role == "donor":
+          donor = DonorProfile.objects.get(user=user)
 
-
-@api_view(['GET'])
-@permission_classes([IsAuthenticated])
-def donor_donation_request(request):
-     try:
-          donor=DonorProfile.objects.get(user=request.user)
-
-     except DonorProfile.DoesNotExist:
-          return Response(
-               {"error":"Donor profile does not exist"},
-               status=status.HTTP_403_FORBIDDED
+          qs = DonationRequest.objects.filter(
+               available_blood__donor=donor
           )
-     
-     requests=DonationRequest.objects.filter(
-          available_blood__donor=donor
-     )
 
-     serializer=DonationRequestSerializer(
-          requests,many=True
-     )
+     elif user.role == "recipient":
+          recipient = RecipientProfile.objects.get(user=user)
 
+          qs = DonationRequest.objects.filter(
+               recipient=recipient
+          )
+
+     else:
+          return Response({"error":"Invalid role"}, status=403)
+
+     serializer=DonationRequestSerializer(qs,many=True)
      return Response(serializer.data)
 
 
@@ -206,3 +186,46 @@ def recipient_donation_response(request):
     serializer=DonationRequestSerializer(requests,many=True)
     
     return Response(serializer.data)
+
+@api_view(['POST','GET'])
+@permission_classes([IsAuthenticated])
+def donation_offer(request):
+     if request.method=='POST':
+          try:
+               donor=DonorProfile.objects.get(user=request.user)
+
+          except DonorProfile.DoesNotExist:
+               return Response({"error":"Only donor can make the offer"},status=403)
+          
+          serializer=DonationOfferSerialzer(data=request.data)
+          if serializer.is_valid():
+               req_obj=serializer.validated_data['request']
+
+               if DonationOffer.objects.filter(
+                    donor=donor,
+                    request=req_obj
+               ).exists():
+                    return Response({"error":"Cant offer twice"},status=400)
+               
+               serializer.save(donor=donor,request=req_obj)
+               return Response(serializer.data,status=201)
+          
+          return Response(serializer.errors,status=400)
+     
+     user=request.user
+     if user.role=='donor':
+          donor=DonorProfile.objects.get(user=user)
+          offers=DonationOffer.objects.filter(donor=donor)
+
+     elif user.role=='recipient':
+          recipient=RecipientProfile.objects.get(user=user)
+
+          offers=DonationOffer.objects.filter(
+               request__recipient=recipient
+          )
+
+     else:
+          return Response({'error':"Invalid role"},status=403)
+     
+     serializer=DonationOfferSerialzer(offers,many=True)
+     return Response(serializer.data)

@@ -90,3 +90,11 @@ class DonationRequest(models.Model):
 
 
 
+class DonationOffer(models.Model):
+    request=models.ForeignKey(BloodRequest,on_delete=models.CASCADE,related_name='donation_offer')
+
+    donor=models.ForeignKey(DonorProfile,on_delete=models.CASCADE)
+    message=models.TextField(blank=True)
+    status=models.CharField(max_length=20,choices=[("accepted","accepted"),("rejected","rejected"),("pending","pending")],
+                            default="offered")
+    created_at=models.DateTimeField(auto_now_add=True)
