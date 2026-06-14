@@ -102,6 +102,7 @@ export default function Recipient() {
     const access = localStorage.getItem("access");
 
     fetch("http://127.0.0.1:8000/api/recipient_donation_response/", {
+      method:"GET",
       headers: {
         Authorization: `Bearer ${access}`,
       },

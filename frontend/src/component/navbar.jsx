@@ -1,5 +1,6 @@
 import React from "react";
 import { Link, NavLink } from "react-router-dom";
+import NeededBlood from "../pages/Donor/BloodNeed";
 
 export default function Navbar() {
     const role = localStorage.getItem("role");
@@ -8,6 +9,7 @@ export default function Navbar() {
         donor: [
             { name: "Available Blood", path: "/available" },
             { name: "List Blood", path: "/listblood" },
+            { name:"Blood-Needs",path:"/neededblood"}
         ],
         recipient: [
             { name: "My Requests", path: "/myrequests" },

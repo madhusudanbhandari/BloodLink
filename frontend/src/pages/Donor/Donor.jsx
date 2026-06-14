@@ -7,7 +7,8 @@ export default function Donor() {
   useEffect(() => {
     const access = localStorage.getItem("access");
 
-    fetch("http://127.0.0.1:8000/api/donor_donation_requests/", {
+    fetch("http://127.0.0.1:8000/api/request_donation/", {
+      method:"GET",
       headers: {
         Authorization: `Bearer ${access}`,
       },
@@ -33,7 +34,7 @@ export default function Donor() {
     const access = localStorage.getItem("access");
 
     const response = await fetch(
-      `http://127.0.0.1:8000/api/donation_request/${id}/`,
+      `http://127.0.0.1:8000/api/donation_response/${id}/`,
       {
         method: "PATCH",
         headers: {
@@ -83,7 +84,7 @@ export default function Donor() {
       </div>
 
     
-      <h2 className="text-2xl font-bold text-gray-800 mb-6">Blood Requests</h2>
+      <h2 className="text-2xl font-bold text-gray-800 mb-6">Donation Requests</h2>
 
    
       <div className="space-y-5">

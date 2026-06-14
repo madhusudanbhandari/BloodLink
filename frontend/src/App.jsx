@@ -12,6 +12,7 @@ import Profile from "./pages/Profile";
 import MakeRequest from "./pages/Recipient/Make_request";
 import ListBlood from "./pages/Donor/ListBlood";
 import Home from "./pages/Homepage";
+import NeededBlood from "./pages/Donor/BloodNeed";
 
 export default function App(){
   return(
@@ -27,6 +28,8 @@ export default function App(){
           <Route path="/donor" element={<Donor/>}></Route>
           <Route path="/available" element={<Available/>}></Route>
           <Route path="/listblood" element={<ListBlood/>} ></Route>
+          <Route path="/neededblood" element={<NeededBlood/>}></Route>
+
 
           <Route path="/recipient" element={<Recipient/>}></Route>
           <Route path="/myrequests" element={<Request/>}></Route>
